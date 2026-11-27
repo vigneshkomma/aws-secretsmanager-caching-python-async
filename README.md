@@ -220,41 +220,7 @@ pytest -m local
 # Run all tests
 pytest
 ```
-
 ---
-
-## Architecture
-
-```
-┌──────────────────────────────────────────────────┐
-│                   SecretCache                    │
-│  ┌────────────────────────────────────────────┐  │
-│  │              LRUCache<SecretCacheItem>     │  │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐  │  │
-│  │  │ Secret 1 │ │ Secret 2 │ │ Secret 3 │…  │  │
-│  │  └────┬─────┘ └────┬─────┘ └────┬─────┘  │  │
-│  │       │             │            │         │  │
-│  │       ▼             ▼            ▼         │  │
-│  │  ┌─────────────────────────────────────┐   │  │
-│  │  │        SecretCacheItem             │   │  │
-│  │  │  ┌──────────────────────────────┐  │   │  │
-│  │  │  │ LRUCache<SecretCacheVersion> │  │   │  │
-│  │  │  │  AWSCURRENT  │  AWSPREVIOUS │  │   │  │
-│  │  │  └──────────────────────────────┘  │   │  │
-│  │  └─────────────────────────────────────┘   │  │
-│  └────────────────────────────────────────────┘  │
-│                                                  │
-│          aiobotocore (AWS SDK)                   │
-└──────────────────────────────────────────────────┘
-```
-
-- **`SecretCache`** — top-level client, manages the cache lifecycle
-- **`LRUCache`** — thread-safe least-recently-used cache with async lock
-- **`SecretCacheItem`** — represents a single secret, handles refresh timing and version lookups
-- **`SecretCacheVersion`** — represents a specific version of a secret, caches `GetSecretValue` results
-
----
-
 ## License
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
